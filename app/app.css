@@ -12,10 +12,12 @@
   --color-badge-green: #d5faf1;
   --color-badge-red: #f9e3e2;
   --color-badge-yellow: #fceed8;
+  --color-badge-blue: #dbeafe;
 
   --color-badge-green-text: #254d4a;
   --color-badge-red-text: #752522;
   --color-badge-yellow-text: #73321b;
+  --color-badge-blue-text: #1e40af;
 }
 
 html,
