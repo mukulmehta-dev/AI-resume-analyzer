@@ -42,6 +42,7 @@ declare global {
     }
 }
 
+
 interface PuterStore {
     isLoading: boolean;
     error: string | null;

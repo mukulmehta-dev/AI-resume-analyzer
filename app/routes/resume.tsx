@@ -82,6 +82,12 @@ const Resume = () => {
                     ) : (
                         <img src="/images/resume-scan-2.gif" className="w-full" />
                     )}
+                     <Link
+                        to={`/resume/${id}/improve`}
+                        className="inline-block mt-4 bg-black text-white px-5 py-2 rounded-lg text-sm font-semibold"
+                    >
+                        Improve Resume with AI
+                    </Link>
                 </section>
             </div>
         </main>
