@@ -24,13 +24,32 @@ const ImprovedResumePDF = ({ content }: Props) => {
 
   return (
     <div>
-
+      <style>{`
+  #resume-html h1,
+  #resume-html h2,
+  #resume-html h3 {
+    background: transparent !important;
+    color: black !important;
+    -webkit-text-fill-color: black !important; /* overrides text-gradient */
+    background-image: none !important;
+  }
+`}</style>
       {/* Resume Preview */}
       <div
         id="resume-html"
         dangerouslySetInnerHTML={{ __html: content }}
-        className="bg-white p-8 shadow-md"
+        className="bg-white p-8 shadow-md max-w-none"
       />
+      <style>{`
+  #resume-html h1,
+  #resume-html h2,
+  #resume-html h3 {
+    background: transparent !important;
+    color: black !important;
+    -webkit-text-fill-color: black !important; /* overrides text-gradient */
+    background-image: none !important;
+  }
+`}</style>
 
       {/* Download Button */}
       <button

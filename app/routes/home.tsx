@@ -144,7 +144,9 @@ export default function Home() {
                                 disabled={isDeletingAll}
                                 className="flex-1 px-4 py-2 rounded-xl bg-red-500 text-white font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
                             >
-                                {isDeletingAll ? "Deleting..." : "Delete All"}
+                                <Link to="/wipe">
+                                    Wipe Data
+                                </Link>
                             </button>
                         </div>
                     </div>

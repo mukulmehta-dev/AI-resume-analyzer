@@ -105,29 +105,19 @@ HTML structure requirements:
 - Section titles should be <h2>
 - Bullet points must use <ul><li>
 - Contact information should appear under the name.
+- Use Inline styling
+
+if it extends till page 2 format it accordingly for correct spacial allignment
 
 Name
 Contact
 Summary
-Skills (bullet list)
+Skills/Competencies (bullet list)
 Projects (bullet list)
 Experience (bullet list)
 Education
 
 Example structure:
-<style>h1{
-        ...
-  }
-  .resume h2 {
-  border-bottom: 2px solid #000;
-  padding-bottom: 4px;
-}
-  .resume hr {
-  border: none;
-  border-top: 2px solid #000;
-  margin: 10px 0 15px 0;
-}
-  </style>
 <div class="resume">
   
   <h1>NAME</h1>
@@ -200,10 +190,9 @@ setLoading(false);
     <img src="/images/resume-scan-2.gif" className="w-full" />
   ) : (
     <>
-      <div
-  className="whitespace-pre-wrap"
-/>
-
+       <div 
+      className="whitespace-pre-wrap"
+    />
       {/* DOWNLOAD BUTTON */}
       {!loading && improvedResume && (
         <div className="mt-6">
