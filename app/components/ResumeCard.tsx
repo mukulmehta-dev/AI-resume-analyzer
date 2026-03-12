@@ -72,7 +72,7 @@ const ResumeCard = ({
             <Link
                 to={showDeleteMenu ? "#" : `/resume/${id}`}
                 onClick={(e) => showDeleteMenu && e.preventDefault()}
-                className={`resume-card animate-in fade-in duration-1000 select-none ${
+                className={`resume-card animate-in fade-in duration-1000 select-none bg-[#111] border border-[#a855f7]/30 hover:border-[#a855f7] hover:shadow-[0_0_25px_#a855f7] transition-all duration-300 rounded-2xl ${
                     isDeleting ? "opacity-40 pointer-events-none" : ""
                 }`}
                 onMouseDown={startLongPress}
@@ -84,16 +84,29 @@ const ResumeCard = ({
             >
                 <div className="resume-card-header">
                     <div className="flex flex-col gap-2">
-                        {companyName && <h2 className="!text-black font-bold break-words">{companyName}</h2>}
-                        {jobTitle && <h3 className="text-lg break-words text-gray-500">{jobTitle}</h3>}
-                        {!companyName && !jobTitle && <h2 className="!text-black font-bold">Resume</h2>}
+                        {companyName && (
+                            <h2 className="!text-white font-bold break-words drop-shadow-[0_0_8px_#a855f7]">
+                                {companyName}
+                            </h2>
+                        )}
+                        {jobTitle && (
+                            <h3 className="text-lg break-words text-gray-300">{jobTitle}</h3>
+                        )}
+                        {!companyName && !jobTitle && (
+                            <h2 className="!text-white font-bold drop-shadow-[0_0_8px_#a855f7]">
+                                Resume
+                            </h2>
+                        )}
                     </div>
                     <div className="flex-shrink-0">
-                        <ScoreCircle score={feedback.overallScore} />
+                        <ScoreCircle
+                            score={feedback.overallScore}
+                            
+                        />
                     </div>
                 </div>
                 {resumeUrl && (
-                    <div className="gradient-border animate-in fade-in duration-1000">
+                    <div className="gradient-border animate-in fade-in duration-1000 border border-[#a855f7]/20 hover:border-[#a855f7] transition-colors rounded-2xl overflow-hidden">
                         <div className="w-full h-full">
                             <img
                                 src={resumeUrl}
@@ -106,23 +119,25 @@ const ResumeCard = ({
             </Link>
 
             {showDeleteMenu && (
-                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-black/60 animate-in fade-in duration-200">
-                    <div className="bg-white rounded-2xl shadow-xl p-6 flex flex-col items-center gap-4 mx-4">
-                        <p className="font-semibold text-gray-800 text-center">Delete this resume?</p>
-                        <p className="text-sm text-gray-500 text-center">
+                <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-[#1a1a2a] rounded-2xl shadow-[0_0_30px_#a855f7] p-6 flex flex-col items-center gap-4 mx-4 border border-[#a855f7]">
+                        <p className="font-semibold text-white text-center drop-shadow-[0_0_8px_#a855f7]">
+                            Delete this resume?
+                        </p>
+                        <p className="text-sm text-gray-300 text-center">
                             {companyName || "This resume"} — {jobTitle}
                         </p>
                         <div className="flex gap-3 w-full">
                             <button
                                 onClick={(e) => { e.preventDefault(); setShowDeleteMenu(false); }}
-                                className="flex-1 px-4 py-2 rounded-xl border border-gray-200 text-gray-600 font-medium hover:bg-gray-50 transition-colors"
+                                className="flex-1 px-4 py-2 rounded-xl border border-[#a855f7]/30 text-gray-200 font-medium hover:bg-[#a855f7]/10 transition-colors"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleDelete}
                                 disabled={isDeleting}
-                                className="flex-1 px-4 py-2 rounded-xl bg-red-500 text-white font-medium hover:bg-red-600 transition-colors disabled:opacity-50"
+                                className="flex-1 px-4 py-2 rounded-xl bg-gradient-to-r from-[#a855f7] to-[#ec4899] text-white font-medium hover:shadow-[0_0_20px_#a855f7] transition-all disabled:opacity-50"
                             >
                                 {isDeleting ? "Deleting..." : "Delete"}
                             </button>

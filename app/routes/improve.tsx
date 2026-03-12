@@ -5,11 +5,10 @@ import { extractResumeText } from "~/lib/extractResumeText";
 import ATS from "~/components/ATS";
 import ImprovedResumePDF from "~/components/ImprovedResumePDF";
 
-
-export const meta = () => ([
+export const meta = () => [
   { title: "Resumind | Improve Resume" },
   { name: "description", content: "AI powered resume wording improvement" },
-]);
+];
 
 const Improve = () => {
   const [feedback, setFeedback] = useState<Feedback | null>(null);
@@ -29,27 +28,25 @@ const Improve = () => {
       navigate(`/auth?next=/resume/${id}/improve`);
     }
   }, [isLoading]);
-      useEffect(() => {
-        const loadResume = async () => {
-            const resume = await kv.get(`resume:${id}`);
-
-            if(!resume) return;
-
-            const data = JSON.parse(resume);
-
-            setFeedback(data.feedback);
-            console.log({ feedback: data.feedback });
-        }
-
-        loadResume();
-    }, [id]);
 
   useEffect(() => {
+    const loadResume = async () => {
+      const resume = await kv.get(`resume:${id}`);
 
+      if (!resume) return;
+
+      const data = JSON.parse(resume);
+
+      setFeedback(data.feedback);
+      console.log({ feedback: data.feedback });
+    };
+
+    loadResume();
+  }, [id]);
+
+  useEffect(() => {
     const improveResume = async () => {
-
       try {
-
         const resume = await kv.get(`resume:${id}`);
         if (!resume) return;
 
@@ -66,7 +63,10 @@ const Improve = () => {
 
         // STEP 3: extract text from pdf
         const resumeText = await extractResumeText(pdfBlob);
-        <ATS score={feedback?.ATS.score || 0} suggestions={feedback?.ATS.tips || []} />
+        <ATS
+          score={feedback?.ATS.score || 0}
+          suggestions={feedback?.ATS.tips || []}
+        />;
 
         // STEP 4: send to AI
         const prompt = `
@@ -142,18 +142,16 @@ Resume:
 ${resumeText}
 `;
 
+        const response = await ai.chat(prompt);
 
+        console.log("AI RESPONSE:", response);
 
-const response = await ai.chat(prompt);
+        const improvedText =
+          (response as any)?.message?.content ??
+          "AI failed to generate resume.";
 
-console.log("AI RESPONSE:", response);
-
-const improvedText =
-  (response as any)?.message?.content ??
-  "AI failed to generate resume.";
-
-setImprovedResume(improvedText);
-setLoading(false);
+        setImprovedResume(improvedText);
+        setLoading(false);
       } catch (error) {
         console.error("Improve resume error:", error);
         setImprovedResume("Something went wrong while improving the resume.");
@@ -162,50 +160,71 @@ setLoading(false);
     };
 
     improveResume();
-
   }, [id]);
 
-  return (
-    <main className="!pt-0">
+  
+  useEffect(() => {
+    if (!loading && improvedResume && improvedResume !== "Something went wrong while improving the resume.") {
 
-      <nav className="resume-nav">
-        <Link to={`/`} className="back-button">
-          <img src="/icons/back.svg" className="w-2.5 h-2.5" />
-          <span className="text-gray-800 text-sm font-semibold">
+    }
+  }, [loading, improvedResume]);
+
+  return (
+    <main className="!pt-0 bg-[#050505] min-h-screen">
+      {/* Navigation */}
+      <nav className="resume-nav border-b border-[#a855f7]/20 hover:border-[#a855f7] hover:shadow-[0_0_20px_#a855f7] transition-all duration-300">
+        <Link
+          to={`/`}
+          className="back-button flex items-center gap-2 !bg-transparent border border-[#a855f7]/30 hover:border-[#a855f7] hover:shadow-[0_0_15px_#a855f7] transition-all duration-300 rounded-lg p-2"
+        >
+          <img
+            src="/icons/back.svg"
+            alt="logo"
+            className="w-2.5 h-2.5 invert brightness-200"
+          />
+          <span className="text-gray-200 text-sm font-semibold tracking-wide">
             Back to home
           </span>
         </Link>
       </nav>
 
-      <div className="flex flex-row w-full max-lg:flex-col">
+      {/* Main content – full width, large preview */}
+      <div className="w-full px-4 md:px-8 py-8">
+        <section className="feedback-section no-glow relative overflow-hidden">
+          
+          
+          <div className="flex items-center gap-3 mb-6">
+            
+            <h2 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#a855f7] via-[#3b82f6] to-[#ec4899] tracking-tight">
+              Improved Resume
+            </h2>
+          </div>
 
-        {/* Resume Preview */}
-       <section className="feedback-section">
+          {loading ? (
+            <div className="flex justify-center">
+              <img
+                src="/images/resume-scan-2.gif"
+                className="w-full max-w-2xl rounded-2xl border border-[#a855f7]/30"
+              />
+            </div>
+          ) : (
+            <>
+              {/* AI generated badge with icon */}
+              <div className="flex items-center gap-2 mb-4 text-gray-300 border border-[#a855f7]/30 rounded-full px-4 py-1 w-fit bg-[#0a0a0f]">
+                
+                <span className="text-sm">Enhanced with AI....</span>
+              </div>
 
-  <h2 className="text-4xl !text-black font-bold mb-6">
-    Improved Resume
-  </h2>
-
-  {loading ? (
-    <img src="/images/resume-scan-2.gif" className="w-full" />
-  ) : (
-    <>
-       <div 
-      className="whitespace-pre-wrap"
-    />
-      {/* DOWNLOAD BUTTON */}
-      {!loading && improvedResume && (
-        <div className="mt-6">
-          <ImprovedResumePDF content={improvedResume}></ImprovedResumePDF>
-        </div>
-      )}
-    </>
-  )}
-
-</section>
-
+              {/* Improved resume content – now larger */}
+              {improvedResume && (
+                <div className="mt-2 w-full">
+                  <ImprovedResumePDF content={improvedResume} />
+                </div>
+              )}
+            </>
+          )}
+        </section>
       </div>
-
     </main>
   );
 };

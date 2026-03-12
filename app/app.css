@@ -5,46 +5,68 @@
 @theme {
   --font-sans: "Mona Sans", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --color-dark-200: #475467;
-  --color-light-blue-100: #c1d3f81a;
-  --color-light-blue-200: #a7bff14d;
 
-  --color-badge-green: #d5faf1;
-  --color-badge-red: #f9e3e2;
-  --color-badge-yellow: #fceed8;
-  --color-badge-blue: #dbeafe;
+  /* Dark theme base colors */
+  --color-dark-200: #e2e8f0;
+  --color-light-blue-100: rgba(124, 58, 237, 0.1);
+  --color-light-blue-200: rgba(59, 130, 246, 0.2);
 
-  --color-badge-green-text: #254d4a;
-  --color-badge-red-text: #752522;
-  --color-badge-yellow-text: #73321b;
-  --color-badge-blue-text: #1e40af;
+  /* Neon badge backgrounds */
+  --color-badge-green: rgba(168, 85, 247, 0.2);
+  --color-badge-red: rgba(236, 72, 153, 0.2);
+  --color-badge-yellow: rgba(234, 179, 8, 0.2);
+  --color-badge-blue: rgba(59, 130, 246, 0.2);
+
+  --color-badge-green-text: #a855f7;
+  --color-badge-red-text: #ec4899;
+  --color-badge-yellow-text: #eab308;
+  --color-badge-blue-text: #3b82f6;
+
+  /* Neon colors */
+  --color-neon-purple: #a855f7;
+  --color-neon-blue: #3b82f6;
+  --color-neon-pink: #ec4899;
+  --color-neon-amber: #eab308;
+  --color-dark-bg: #0a0a0f;
+  --color-darker-bg: #050505;
 }
 
 html,
 body {
-  @apply bg-white;
+  background-color: #0a0a0f;
+  color: #e0e0e0;
 }
 
 main {
   @apply min-h-screen pt-10;
 }
+
 h1 {
-  @apply max-sm:text-[3rem] text-6xl  text-gradient leading-tight xl:tracking-[-2px] font-semibold;
+  @apply max-sm:text-[3rem] text-6xl text-gradient leading-tight xl:tracking-[-2px] font-semibold;
 }
 
 h2 {
-  @apply max-sm:text-xl text-3xl text-dark-200;
+  @apply max-sm:text-xl text-3xl;
+  color: var(--color-dark-200);
 }
 
 label {
-  @apply text-dark-200;
-}
-input {
-  @apply w-full p-4 inset-shadow rounded-2xl focus:outline-none bg-white;
+  color: var(--color-dark-200);
 }
 
+input,
 textarea {
-  @apply w-full p-4 inset-shadow rounded-2xl focus:outline-none bg-white;
+  @apply w-full p-4 inset-shadow rounded-2xl focus:outline-none;
+  background-color: #111;
+  border: 1px solid #333;
+  color: #e0e0e0;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input:focus,
+textarea:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 10px #a855f7, inset 0 0 5px #3b82f6;
 }
 
 form {
@@ -53,41 +75,339 @@ form {
 
 @layer components {
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#AB8C95] via-[#000000] to-[#8E97C5];
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(to right, #a855f7, #3b82f6, #ec4899);
   }
+
   .gradient-border {
-    @apply bg-gradient-to-b from-light-blue-100 to-light-blue-200 p-4 rounded-2xl;
+    @apply p-4 rounded-2xl;
+    background: linear-gradient(to bottom, var(--color-light-blue-100), var(--color-light-blue-200));
+    border: 1px solid rgba(124, 58, 237, 0.3);
+    transition: border-color 0.3s, box-shadow 0.3s;
   }
+
+  .gradient-border:hover {
+    border-color: #a855f7;
+    box-shadow: 0 0 15px #a855f7, 0 0 25px #3b82f6;
+  }
+
+  /* ----- CYBERPUNK BUTTON ANIMATIONS ----- */
+  .primary-button,
+  .auth-button,
+  .back-button {
+    position: relative;
+    background: transparent !important;
+    border: none !important;
+    overflow: visible;
+    z-index: 1;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: white;
+    isolation: isolate;
+  }
+
+  /* Base styles for buttons */
   .primary-button {
-    @apply primary-gradient text-white rounded-full px-4 py-2 cursor-pointer w-full;
+    @apply rounded-full px-4 py-2 cursor-pointer w-full;
   }
-  .resume-nav {
-    @apply flex flex-row justify-between items-center p-4 border-b border-gray-200;
+
+  .auth-button {
+    @apply rounded-full py-4 px-8 cursor-pointer w-[600px] max-md:w-full text-3xl font-semibold;
   }
-  .resume-summary {
-    @apply flex flex-row items-center justify-center p-4 gap-4;
-    .category {
-      @apply flex flex-row gap-2 items-center bg-gray-50 rounded-2xl p-4 w-full justify-between;
+
+  .back-button {
+    @apply flex flex-row items-center gap-2 rounded-lg p-2 shadow-sm;
+  }
+
+  /* Glowing border effect using multiple pseudo-elements */
+  .primary-button::before,
+  .auth-button::before,
+  .back-button::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 5px;
+    background: linear-gradient(45deg, 
+      #a855f7, 
+      #3b82f6, 
+      #ec4899, 
+      #a855f7, 
+      #3b82f6
+    );
+    background-size: 300% 300%;
+    -webkit-mask: 
+      linear-gradient(black, black) content-box,
+      linear-gradient(black, black);
+    -webkit-mask-composite: xor;
+    mask: 
+      linear-gradient(black, black) content-box,
+      linear-gradient(black, black);
+    mask-composite: exclude;
+    opacity: 0.7;
+    transition: opacity 0.3s, filter 0.3s;
+    animation: borderRotate 6s linear infinite;
+    z-index: -1;
+  }
+
+  /* Inner glow layer */
+  .primary-button::after,
+  .auth-button::after,
+  .back-button::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+      rgba(168, 85, 247, 0.8) 0%,
+      rgba(59, 130, 246, 0.4) 40%,
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* Hover effects */
+  .primary-button:hover,
+  .auth-button:hover,
+  .back-button:hover {
+    transform: translateY(-2px);
+  }
+
+  .primary-button:hover::before,
+  .auth-button:hover::before,
+  .back-button:hover::before {
+    opacity: 1;
+    filter: blur(2px);
+    animation: borderRotate 2s linear infinite;
+  }
+
+  .primary-button:hover::after,
+  .auth-button:hover::after,
+  .back-button:hover::after {
+    opacity: 1;
+  }
+
+  /* Active/click effect */
+  .primary-button:active,
+  .auth-button:active,
+  .back-button:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  .primary-button:active::before,
+  .auth-button:active::before,
+  .back-button:active::before {
+    filter: blur(4px) brightness(1.2);
+    animation: borderRotate 1s linear infinite;
+  }
+
+  /* Track mouse position for inner glow */
+  .primary-button,
+  .auth-button,
+  .back-button {
+    --mouse-x: 50%;
+    --mouse-y: 50%;
+  }
+
+  .primary-button:hover,
+  .auth-button:hover,
+  .back-button:hover {
+    --mouse-x: attr(data-mouse-x);
+    --mouse-y: attr(data-mouse-y);
+  }
+
+  /* Keyframe animations */
+  @keyframes borderRotate {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
     }
   }
-  .back-button {
-    @apply flex flex-row items-center gap-2 border border-gray-200 rounded-lg p-2 shadow-sm;
+
+  @keyframes glowPulse {
+    0%, 100% {
+      box-shadow: 
+        0 0 5px #a855f7,
+        0 0 10px #3b82f6,
+        inset 0 0 5px #ec4899;
+    }
+    50% {
+      box-shadow: 
+        0 0 20px #a855f7,
+        0 0 30px #3b82f6,
+        0 0 40px #ec4899,
+        inset 0 0 10px #a855f7;
+    }
   }
+
+  @keyframes dataFlow {
+    0% {
+      background-position: 0% 0%;
+    }
+    100% {
+      background-position: 200% 0%;
+    }
+  }
+
+  /* Additional cyberpunk effects for specific buttons */
   .auth-button {
-    @apply primary-gradient rounded-full py-4 px-8 cursor-pointer w-[600px] max-md:w-full text-3xl font-semibold text-white;
+    position: relative;
+    overflow: hidden;
   }
+
+  .auth-button::before {
+    inset: -3px;
+    padding: 3px;
+  }
+
+  /* Scanning line effect */
+  .auth-button .scan-line {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, 
+      transparent,
+      #a855f7,
+      #ec4899,
+      #3b82f6,
+      transparent
+    );
+    animation: scanMove 3s linear infinite;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .auth-button:hover .scan-line {
+    opacity: 1;
+  }
+
+  @keyframes scanMove {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 200%;
+    }
+  }
+
+  /* Matrix rain effect for back button */
+  .back-button {
+    overflow: hidden;
+    colour:white;
+  }
+
+  .back-button .matrix-rain {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(168, 85, 247, 0.1) 2px,
+      rgba(59, 130, 246, 0.1) 4px
+    );
+    transform: translateY(-100%);
+    transition: transform 0.5s;
+    pointer-events: none;
+    color: whitesmoke;
+  }
+
+  .back-button:hover .matrix-rain {
+    transform: translateY(100%);
+    transition: transform 2s linear;
+  }
+
+  /* ----- END BUTTON ANIMATIONS ----- */
+
+  .resume-nav {
+    @apply flex flex-row justify-between items-center p-4 border-b;
+    border-color: #333;
+  }
+
+  .resume-summary {
+    @apply flex flex-row items-center justify-center p-4 gap-4;
+
+    .category {
+      @apply flex flex-row gap-2 items-center rounded-2xl p-4 w-full justify-between;
+      background-color: #1a1a1a;
+      border: 1px solid #333;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .category:hover {
+      border-color: #a855f7;
+      box-shadow: 0 0 15px #a855f7;
+    }
+  }
+
   .main-section {
     @apply flex flex-col items-center gap-8 pt-12 max-sm:mx-2 mx-15 pb-5;
   }
+
   .page-heading {
     @apply flex flex-col items-center gap-8 max-w-4xl text-center max-sm:gap-4;
   }
+
   .resumes-section {
     @apply flex flex-wrap max-md:flex-col max-md:gap-4 gap-6 items-start max-md:items-center w-full max-w-[1850px] justify-evenly;
   }
 
   .resume-card {
-    @apply flex flex-col gap-8 h-[560px] w-[350px] lg:w-[430px] xl:w-[490px] bg-white rounded-2xl p-4;
+    @apply flex flex-col gap-8 h-[560px] w-[350px] lg:w-[430px] xl:w-[490px] rounded-2xl p-4;
+    background-color: #111827;
+    border: 1px solid #333;
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .resume-card:hover {
+    border-color: #a855f7;
+    box-shadow: 0 0 25px #a855f7, 0 0 40px #3b82f6;
+    transform: translateY(-4px);
+  }
+
+  /* Card glow effect */
+  .resume-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center,
+      rgba(168, 85, 247, 0.1) 0%,
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+  }
+
+  .resume-card:hover::before {
+    opacity: 1;
+    animation: rotateGlow 10s linear infinite;
+  }
+
+  @keyframes rotateGlow {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
   }
 
   .resume-card-header {
@@ -96,14 +416,35 @@ form {
 
   .feedback-section {
     @apply flex flex-col gap-8 w-1/2 px-8 max-lg:w-full py-6;
+    background-color: #0f0f17;
+    border: 1px solid #333;
+    border-radius: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .feedback-section:hover {
+    border-color: #ec4899;
+    box-shadow: 0 0 20px #ec4899;
   }
 
   .navbar {
-    @apply flex flex-row justify-between items-center bg-white rounded-full p-4 w-full px-10 max-w-[1200px] mx-auto;
+    @apply flex flex-row justify-between items-center rounded-full p-4 w-full px-10 max-w-[1200px] mx-auto;
+    background-color: rgba(10, 10, 15, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(124, 58, 237, 0.3);
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .navbar:hover {
+    border-color: #a855f7;
+    box-shadow: 0 0 20px #a855f7;
   }
 
   .score-badge {
     @apply flex flex-row items-center justify-center py-1 px-2 gap-4 rounded-[96px];
+    background-color: #1a1a2a;
+    border: 1px solid #a855f7;
+    color: #a855f7;
   }
 
   .form-div {
@@ -111,44 +452,90 @@ form {
   }
 
   .uplader-drag-area {
-    @apply relative p-8 text-center transition-all duration-700 cursor-pointer bg-white rounded-2xl min-h-[208px];
+    @apply relative p-8 text-center transition-all duration-700 cursor-pointer rounded-2xl min-h-[208px];
+    background-color: #111;
+    border: 2px dashed #333;
+    transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s;
   }
+
+  .uplader-drag-area:hover {
+    border-color: #a855f7;
+    box-shadow: 0 0 20px #a855f7;
+    background-color: #1a1a2a;
+  }
+
   .uploader-selected-file {
-    @apply flex items-center justify-between p-3 bg-gray-50 rounded-2xl;
+    @apply flex items-center justify-between p-3 rounded-2xl;
+    background-color: #1a1a2a;
+    border: 1px solid #333;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .uploader-selected-file:hover {
+    border-color: #ec4899;
+    box-shadow: 0 0 15px #ec4899;
   }
 }
 
 @utility bg-gradient {
-  background: linear-gradient(to bottom, #f0f4ff 60%, #fa7185cc);
+  background: linear-gradient(to bottom, #1a1f2e, #4a1e3a);
 }
 
 @utility text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#AB8C95] via-[#000000] to-[#8E97C5];
+  @apply bg-clip-text text-transparent;
+  background-image: linear-gradient(to right, #a855f7, #3b82f6, #ec4899);
 }
 
 @utility gradient-hover {
-  @apply bg-gradient-to-b from-light-blue-100 to-light-blue-200;
+  background: linear-gradient(to bottom, rgba(124, 58, 237, 0.2), rgba(236, 72, 153, 0.3));
 }
 
 @utility primary-gradient {
-  background: linear-gradient(to bottom, #8e98ff, #606beb);
-  box-shadow: 0px 74px 21px 0px #6678ef00;
+  background: linear-gradient(135deg, #a855f7, #3b82f6);
+  box-shadow: 0 0 15px rgba(124, 58, 237, 0.5);
 }
 
 @utility primary-gradient-hover {
-  background: linear-gradient(to bottom, #717dff, #4957eb);
+  background: linear-gradient(135deg, #3b82f6, #ec4899);
+  box-shadow: 0 0 25px #ec4899, 0 0 35px #a855f7;
 }
 
 @utility inset-shadow {
-  box-shadow: inset 0 0 12px 0 rgba(36, 99, 235, 0.2);
+  box-shadow: inset 0 0 12px 0 rgba(124, 58, 237, 0.3);
   backdrop-filter: blur(10px);
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Additional cyberpunk hover effects */
+.navbar, .resume-card, .feedback-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.navbar::before, .resume-card::before, .feedback-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    transparent,
+    rgba(168, 85, 247, 0.1),
+    rgba(59, 130, 246, 0.1),
+    rgba(236, 72, 153, 0.1),
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+}
+
+.navbar:hover::before, .resume-card:hover::before, .feedback-section:hover::before {
+  opacity: 1;
+  animation: rotateGlow 10s linear infinite;
 }
