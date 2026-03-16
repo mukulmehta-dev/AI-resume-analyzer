@@ -149,26 +149,27 @@ Only give scores outside this range when there is clear evidence:
 SCORING CRITERIA — evaluate each category independently based on what you actually see:
 
 ATS (Applicant Tracking System):
+- the ATS score which is analysed in screening process of resumes by big companies like google, microsoft
 - Does it use standard section headings (Experience, Education, Skills)?
 - Do keywords from the job description appear naturally in the resume?
 - Is it free of tables, columns, images, or headers/footers that break ATS parsing?
-- A resume with good keyword coverage and clean formatting scores 70-85. Missing key terms scores 50-65.
+- A resume with good keyword coverage and clean formatting scores 65-85. Missing key terms scores 40 - 65.
 
 Content:
 - Are bullet points specific and achievement-focused, or vague and duty-based?
 - Are there measurable results (numbers, percentages, impact)?
 - Is the experience relevant to the target role?
-- Strong quantified achievements score 75-90. Vague duties with no metrics score 45-65.
+- Strong quantified achievements score 65-90. Vague duties with no metrics score 45-65.
 
 Skills:
 - Do the listed skills match what the job description requires?
 - Are important required skills missing entirely?
 - Are the skills current and relevant to the industry?
-- Strong alignment with job requirements scores 70-85. Major gaps score 40-60.
+- Strong alignment with job requirements scores 65-85. Major gaps score 40-60.
 
 Structure:
 - Is the layout clean, consistent, and easy to scan in 6 seconds?
-- Is there a logical flow: summary → experience → education → skills?
+- Is there a logical flow: summary → experience → skills -> projects -> education?
 - Is the length appropriate (1 page for <5 years, 2 pages for 5+ years)?
 - Clean, well-organized layout scores 70-85. Cluttered or inconsistent scores 45-65.
 
@@ -183,15 +184,25 @@ Tone & Style:
 
 OVERALL SCORE:
 Calculate as a weighted average:
-overallScore = Math.round((ATS × 0.30) + (content × 0.25) + (skills × 0.20) + (structure × 0.15) + (toneAndStyle × 0.10))
+overallScore = Math.round(
+  (content × 0.05) +
+  (structure × 0.05) +
+  (skills × 0.15) +
+  (experienceRelevance × 0.15) +
+  (ATS × 0.50) +
+  (toneAndStyle × 0.10)
+)
 
 ---
+TIPS :
+If score ≥ 70
+- Provide 1 positive observation
+- No improvements
 
-TIPS:
-- Provide exactly 4 tips per category
-- Mix "good" (what is working) and "improve" (what needs fixing) based on what you actually observe
-- Make each tip specific to this resume — no generic advice
-- "improve" tips must include a concrete actionable suggestion, not just criticism
+If score < 70
+- Provide exactly 4 tips
+- Mix "good" and "improve"
+- Improve tips must include a concrete actionable fix
 
 ---
 

@@ -6,18 +6,17 @@ import ATS from "~/components/ATS";
 import ImprovedResumePDF from "~/components/ImprovedResumePDF";
 
 export const meta = () => [
-  { title: "Resumind | Improve Resume" },
+  { title: "Quiddity | Improve Resume" },
   { name: "description", content: "AI powered resume wording improvement" },
 ];
 
 const Improve = () => {
-  const [feedback, setFeedback] = useState<Feedback | null>(null);
-
   const { id } = useParams();
   const navigate = useNavigate();
 
   const { auth, isLoading, fs, kv, ai } = usePuterStore();
 
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [loading, setLoading] = useState(true);
   const [resumeUrl, setResumeUrl] = useState("");
   const [improvedResume, setImprovedResume] = useState("");
@@ -29,22 +28,25 @@ const Improve = () => {
     }
   }, [isLoading]);
 
+  // load feedback from KV
   useEffect(() => {
     const loadResume = async () => {
       const resume = await kv.get(`resume:${id}`);
-
       if (!resume) return;
 
       const data = JSON.parse(resume);
 
       setFeedback(data.feedback);
-      console.log({ feedback: data.feedback });
+      console.log("Loaded feedback:", data.feedback);
     };
 
     loadResume();
   }, [id]);
 
+  // Improve resume using AI
   useEffect(() => {
+    if (!feedback) return;
+
     const improveResume = async () => {
       try {
         const resume = await kv.get(`resume:${id}`);
@@ -61,85 +63,251 @@ const Improve = () => {
         const url = URL.createObjectURL(pdfBlob);
         setResumeUrl(url);
 
-        // STEP 3: extract text from pdf
+        // extract text from PDF
         const resumeText = await extractResumeText(pdfBlob);
-        <ATS
-          score={feedback?.ATS.score || 0}
-          suggestions={feedback?.ATS.tips || []}
-        />;
 
-        // STEP 4: send to AI
-        const prompt = `
-You are a professional resume writer and ATS optimization expert.
+        const atsScore = feedback?.ATS?.score || 0;
+        const atsTips = feedback?.ATS?.tips || [];
 
-Rewrite and improve the following resume while preserving all factual information.
+        const prompt = `You are a professional resume writer and ATS (Applicant Tracking System) optimization expert.
 
-Return ONLY valid HTML with embedded CSS.
-Do not include explanations or markdown.
-Wrap the resume inside <div class="resume">.
+Your job is to improve the resume below to maximize ATS compatibility and recruiter readability while preserving all factual information.
 
-ATS Feedback:
-Score: ${feedback}
+The output must strictly follow the provided LaTeX template.
 
-Improvement Tips:
-${feedback?.ATS?.tips}
+---
 
-Rules:
-- Do NOT invent achievements.
-- Do NOT change education or experience facts.
-- Improve wording using strong action verbs.
-- Convert responsibilities into achievement-focused bullet points.
-- Quantify results if numbers already exist.
-- Keep the resume concise and ATS-friendly.
+PRIMARY OBJECTIVE
 
-Formatting instructions:
-- Return ONLY valid HTML with embedded CSS.
-- Do NOT include explanations or markdown.
-- The resume must be a clean one-page layout.
-- Use professional typography.
-- Use clear sections: Header, Summary, Skills, Experience, Projects, Education.
-- Use bullet points for achievements.
+Improve the resume to maximize ATS score by:
 
-HTML structure requirements:
-- Use a container div with class "resume"
-- Section titles should be <h2>
-- Bullet points must use <ul><li>
-- Contact information should appear under the name.
-- Use Inline styling
+• Adding strong industry buzzwords
+• Improving bullet point wording
+• Using powerful action verbs
+• Making achievements measurable when numbers already exist
+• Highlighting technical skills clearly
+• Optimizing phrasing for ATS keyword scanning
 
-if it extends till page 2 format it accordingly for correct spacial allignment
+ATS optimization is the most important goal.
 
-Name
-Contact
-Summary
-Skills/Competencies (bullet list)
-Projects (bullet list)
-Experience (bullet list)
-Education
+---
 
-Example structure:
-<div class="resume">
-  
-  <h1>NAME</h1>
-  <p>Email | Phone | LinkedIn</p>
+STRICT RULES
 
-  <h2>Summary</h2>
-  <p>...</p>
-<hr/>
-  <h2>Skills</h2>
-  <ul>
-    <li>...</li>
-  </ul>
-<hr/>
-  <h2>Experience</h2>
-  <ul>
-    <li>...</li>
-  </ul>
-<hr/>
-</div>
+DO NOT:
+• invent fake projects
+• invent achievements
+• modify education facts
+• change company names
+• change dates
+• change contact information
+• use - instead of --
+• use special characters , for example do not use & use \\& instead
+ONLY improve:
+• wording
+• bullet points
+• skill descriptions
+• project descriptions
+• respond under 6500 characters 
 
-Resume:
+---
+
+ATS FEEDBACK
+
+ATS Score:
+${feedback?.ATS?.score}
+
+ATS Improvement Tips:
+${feedback?.ATS?.tips?.map((tip:any)=>`- ${tip}`).join("\\\\n")}
+
+Use these tips while improving the resume.
+
+---
+
+ATS KEYWORDS / BUZZWORDS
+
+Where appropriate, incorporate relevant technical buzzwords such as:
+
+• problem solving
+• algorithm design
+• data structures
+• software development
+• performance optimization
+• debugging
+• scalable systems
+• clean code
+• version control
+• collaborative development
+• software engineering principles
+• competitive programming
+• system design fundamentals
+
+Only use keywords where they naturally fit.
+
+---
+
+WRITING STYLE RULES
+
+Each bullet point should:
+
+• start with a strong action verb
+• highlight impact or technical implementation
+• emphasize problem solving or system design
+• remain concise (1–2 lines max)
+
+Examples of strong verbs:
+
+Developed
+Engineered
+Designed
+Implemented
+Optimized
+Built
+Automated
+Enhanced
+Architected
+Analyzed
+
+---
+
+OUTPUT FORMAT REQUIREMENTS
+
+Return ONLY valid LaTeX code.
+
+DO NOT:
+• include markdown any mark down
+• include explanations
+• include code fences
+• include comments
+• close all the {} braces
+• do not include the template details in the output. use resume text attached as the text source.
+• if git hub or linked or email is not found do not include it.
+
+The output must begin with:
+
+\\\\documentclass[a4paper,10pt]{article}
+
+The output must end with:
+
+\\\\end{document}
+
+---
+
+LATEX TEMPLATE
+
+You MUST preserve this exact structure and formatting.
+
+\\documentclass[a4paper,10pt]{article}
+
+\\usepackage{latexsym}
+\\usepackage{xcolor}
+\\usepackage{float}
+\\usepackage{enumitem}
+\\usepackage[hidelinks]{hyperref}
+\\usepackage{fancyhdr}
+\\usepackage{tabularx}
+\\usepackage{titlesec}
+\\usepackage{geometry}
+
+\\geometry{left=0.7in, top=0.7in, right=0.7in, bottom=0.7in}
+
+\\pagestyle{fancy}
+\\fancyhf{}
+\\rfoot{\\thepage}
+
+\\titleformat{\\section}{\\large\\scshape\\raggedright}{}{0em}{}[\\titlerule]
+
+% Custom Commands
+\\newcommand{\\resumeItem}[1]{
+\\item #1
+}
+
+\\newcommand{\\resumeSubheading}[4]{
+\\vspace{2pt}
+\\textbf{#1} \\hfill #2 \\\\
+\\textit{#3} \\hfill \\textit{#4}
+\\vspace{-4pt}
+}
+
+\\begin{document}
+
+%----------HEADING----------
+\\begin{center}
+    {\\Huge \\textbf{Arin Gupta}} \\\\
+    \\vspace{2pt}
+    Phone: +91-9343717006 \\quad
+    Email: \\href{mailto:reliablearin@gmail.com}{reliablearin@gmail.com} \\\\ \\vspace{2pt}
+    \\href{https://linkedin.com/in/your-profile}{LinkedIn} \\quad
+    \\href{https://github.com/your-username}{GitHub}
+\\end{center}
+
+%----------EDUCATION----------
+\\section{Education}
+
+\\resumeSubheading
+{International Institute of Professional Studies (IIPS-DAVV)}{Indore, India}
+{Integrated BCA-MCA --- CGPA: 7.12}{2024--2029}
+
+\\resumeSubheading
+{Higher Secondary Education}{Indore, India}
+{Class XII --- 78.4\\%}{2023}
+
+\\resumeSubheading
+{Secondary Education}{Indore, India}
+{Class X --- 84.4\\%}{2021}
+
+%----------SKILLS----------
+\\section{Technical Skills}
+\\begin{itemize}[leftmargin=*]
+\\item \\textbf{Languages:} C, C++, Java, Python, JavaScript
+\\item \\textbf{Frameworks:} Node.js, Express.js
+\\item \\textbf{Databases:} PostgreSQL, MySQL
+\\item \\textbf{Core CS:} Data Structures, Algorithms, Object-Oriented Programming
+\\item \\textbf{Tools:} Git, VS Code
+\\item \\textbf{Concepts:} Servers, Cloud Infrastructure Basics
+\\end{itemize}
+
+%----------PROJECTS----------
+\\section{Projects}
+
+\\textbf{AI Resume Analyzer}
+\\begin{itemize}[leftmargin=*, noitemsep]
+\\resumeItem{Engineered an AI-powered resume analysis tool to assess ATS compatibility and generate actionable improvement recommendations.}
+\\resumeItem{Delivers targeted improvement suggestions to boost ATS pass rates and recruiter engagement.}
+\\end{itemize}
+
+\\textbf{Exercise Rep Counter (Squats \\& Pushups)}
+\\begin{itemize}[leftmargin=*, noitemsep]
+\\resumeItem{Designed and implemented an application that automatically counts workout repetitions to help users monitor exercise performance.}
+\\end{itemize}
+
+\\textbf{Discipline Building App}
+\\begin{itemize}[leftmargin=*, noitemsep]
+\\resumeItem{Built a productivity-focused application using TypeScript to help users maintain consistent habits and discipline.}
+\\end{itemize}
+
+\\textbf{Employee Salary Calculator}
+\\begin{itemize}[leftmargin=*, noitemsep]
+\\resumeItem{Implemented a salary calculator that computes daily wages and enforces stacked leave policies using local storage for privacy.}
+\\end{itemize}
+
+%----------ACHIEVEMENTS----------
+\\section{Achievements}
+\\begin{itemize}[leftmargin=*]
+\\resumeItem{Selected for National Cadet Corps (NCC) National Camp as a college senior, achieving a perfect selection score.}
+\\resumeItem{Competed in 3 hackathons; advanced to Round 2 in two events.}
+\\resumeItem{Awarded winner in the Blind Coding Competition at Chameli Devi Institute.}
+\\resumeItem{Cleared NDA written exam; shortlisted for SSB interview.}
+\\end{itemize}
+
+\\end{document}
+
+---
+
+Resume Content Extracted From PDF:
+
 ${resumeText}
+
 `;
 
         const response = await ai.chat(prompt);
@@ -154,22 +322,17 @@ ${resumeText}
         setLoading(false);
       } catch (error) {
         console.error("Improve resume error:", error);
-        setImprovedResume("Something went wrong while improving the resume.");
+        setImprovedResume(
+          "Something went wrong while improving the resume."
+        );
         setLoading(false);
       }
     };
 
     improveResume();
-  }, [id]);
+  }, [id, feedback]);
 
-  
-  useEffect(() => {
-    if (!loading && improvedResume && improvedResume !== "Something went wrong while improving the resume.") {
-
-    }
-  }, [loading, improvedResume]);
-
-  return (
+    return (
     <main className="!pt-0 bg-[#050505] min-h-screen">
       {/* Navigation */}
       <nav className="resume-nav border-b border-[#a855f7]/20 hover:border-[#a855f7] hover:shadow-[0_0_20px_#a855f7] transition-all duration-300">

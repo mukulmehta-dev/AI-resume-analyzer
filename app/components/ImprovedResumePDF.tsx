@@ -1,4 +1,4 @@
-import html2pdf from "html2pdf.js";
+import React from "react";
 
 interface Props {
   content: string;
@@ -7,51 +7,30 @@ interface Props {
 const ImprovedResumePDF = ({ content }: Props) => {
 
   const downloadPDF = () => {
-    const element = document.getElementById("resume-html");
 
-    if (!element) return;
+    if (!content) {
+      console.error("No LaTeX content provided");
+      return;
+    }
 
-    html2pdf()
-      .set({
-        margin: 0,
-        filename: "improved-resume.pdf",
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-      })
-      .from(element)
-      .save();
+    const encodedLatex = encodeURIComponent(content);
+
+    const url = `https://latexonline.cc/compile?text=${encodedLatex}`;
+
+    // open compilation directly in new tab
+    window.open(url, "_blank");
   };
 
   return (
     <div>
-      <style>{`
-  #resume-html h1,
-  #resume-html h2,
-  #resume-html h3 {
-    background: transparent !important;
-    color: black !important;
-    -webkit-text-fill-color: black !important; /* overrides text-gradient */
-    background-image: none !important;
-  }
-`}</style>
-      {/* Resume Preview */}
+
       <div
         id="resume-html"
-        dangerouslySetInnerHTML={{ __html: content }}
-        className="bg-white p-8 shadow-md max-w-none"
-      />
-      <style>{`
-  #resume-html h1,
-  #resume-html h2,
-  #resume-html h3 {
-    background: transparent !important;
-    color: black !important;
-    -webkit-text-fill-color: black !important; /* overrides text-gradient */
-    background-image: none !important;
-  }
-`}</style>
+        className="bg-white p-8 shadow-md max-w-none overflow-auto"
+      >
+        <h2>if the link fails, copy the download link and paste it on overleaf.com terminal</h2>
+      </div>
 
-      {/* Download Button */}
       <button
         onClick={downloadPDF}
         className="mt-6 bg-black text-white px-6 py-3 rounded-lg"
